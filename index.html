@@ -97,12 +97,11 @@
 
       const topic = document.getElementById("topic").value;
 
-      try {
-        const resp = await fetch("https://api.heygen.com/v1/video.generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic })
-        });
+      const resp = await fetch("https://kontent.onrender.com/generate", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ topic })
+});
 
         const data = await resp.json();
 
