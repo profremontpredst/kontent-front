@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>AI-Видео Продюсер</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 20px;
+      color: #fff;
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background: #00c6ff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0072ff;
+    }
+    .result {
+      margin-top: 20px;
+      text-align: center;
+    }
+    video {
+      width: 100%;
+      max-height: 360px;
+      border-radius: 12px;
+      margin-top: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .loading {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #ccc;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 AI-Видео Продюсер</h1>
+    <form id="generateForm">
+      <input type="text" id="topic" placeholder="Введите тему (например: ТОП-3 ошибок в бизнесе)" required />
+      <button type="submit">Сгенерировать</button>
+    </form>
+    <div id="status" class="loading"></div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("generateForm");
+    const statusEl = document.getElementById("status");
+    const resultEl = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      resultEl.innerHTML = "";
+      statusEl.textContent = "⏳ Генерация видео... может занять пару минут";
+
+      const topic = document.getElementById("topic").value;
+
+      try {
+        const resp = await fetch("https://kontent.onrender.com/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic })
+        });
+
+        const data = await resp.json();
+
+        if (data.error) {
+          statusEl.textContent = "❌ Ошибка: " + data.error;
+          return;
+        }
+
+        statusEl.textContent = "✅ Готово! Сценарий: " + data.script;
+
+        const video = document.createElement("video");
+        video.src = "https://kontent.onrender.com" + data.video;
+        video.controls = true;
+        resultEl.appendChild(video);
+
+      } catch (err) {
+        statusEl.textContent = "❌ Ошибка: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
