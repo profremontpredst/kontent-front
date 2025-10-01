@@ -86,41 +86,42 @@
   </div>
 
   <script>
-    const form = document.getElementById("generateForm");
-    const statusEl = document.getElementById("status");
-    const resultEl = document.getElementById("result");
+  const form = document.getElementById("generateForm");
+  const statusEl = document.getElementById("status");
+  const resultEl = document.getElementById("result");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      resultEl.innerHTML = "";
-      statusEl.textContent = "⏳ Генерация видео... может занять пару минут";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    resultEl.innerHTML = "";
+    statusEl.textContent = "⏳ Генерация видео... может занять пару минут";
 
-      const topic = document.getElementById("topic").value;
+    const topic = document.getElementById("topic").value;
 
+    try {
       const resp = await fetch("https://kontent.onrender.com/generate", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ topic })
-});
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic })
+      });
 
-        const data = await resp.json();
+      const data = await resp.json();
 
-        if (data.error) {
-          statusEl.textContent = "❌ Ошибка: " + data.error;
-          return;
-        }
-
-        statusEl.textContent = "✅ Готово! Сценарий: " + data.script;
-
-        const video = document.createElement("video");
-        video.src = "https://kontent.onrender.com" + data.video;
-        video.controls = true;
-        resultEl.appendChild(video);
-
-      } catch (err) {
-        statusEl.textContent = "❌ Ошибка: " + err.message;
+      if (data.error) {
+        statusEl.textContent = "❌ Ошибка: " + data.error;
+        return;
       }
-    });
-  </script>
+
+      statusEl.textContent = "✅ Готово! Сценарий: " + data.script;
+
+      const video = document.createElement("video");
+      video.src = "https://kontent.onrender.com" + data.video;
+      video.controls = true;
+      resultEl.appendChild(video);
+
+    } catch (err) {
+      statusEl.textContent = "❌ Ошибка: " + err.message;
+    }
+  });
+</script>
 </body>
 </html>
